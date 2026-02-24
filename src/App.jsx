@@ -57,6 +57,14 @@ const SUGGESTED_QUESTIONS = [
   "Is this safe during pregnancy?",
 ];
 
+// ── Demo/Test Accounts for Validation ────────────────────────────────────────
+const DEMO_ACCOUNTS = [
+  { email: "demo@cliniqbot.com", password: "demo123", username: "demo_user", firstName: "Demo", lastName: "User", age: 28, mobile: "+1-800-DEMO-123", height: "175", weight: "75", isActive: true },
+  { email: "test@cliniqbot.com", password: "test123", username: "test_user", firstName: "Test", lastName: "Account", age: 35, mobile: "+1-800-TEST-123", height: "180", weight: "80", isActive: true },
+  { email: "user@cliniqbot.com", password: "user123", username: "john_doe", firstName: "John", lastName: "Doe", age: 42, mobile: "+1-800-USER-123", height: "178", weight: "78", isActive: false },
+  { email: "inactive@cliniqbot.com", password: "demo123", username: "inactive_user", firstName: "Sarah", lastName: "Smith", age: 31, mobile: "+1-800-INAC-123", height: "165", weight: "62", isActive: false },
+];
+
 // ── SVG Components ────────────────────────────────────────────────────────────
 const LogoSVG = () => (
   <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -130,7 +138,7 @@ const styles = `
 `;
 
 // ── Navbar ────────────────────────────────────────────────────────────────────
-const Navbar = ({ page, setPage }) => {
+const Navbar = ({ page, setPage, isLoggedIn, user, onLogout, onLoginClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -153,7 +161,27 @@ const Navbar = ({ page, setPage }) => {
         ))}
       </div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <button className="teal-btn" onClick={() => setPage("chat")} style={{ padding: "9px 20px", borderRadius: 8, border: "none", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", display: window.innerWidth < 640 ? "none" : "block" }}>Try CliniqBot</button>
+        {isLoggedIn ? (
+          <>
+            {user && (
+              <div style={{ position: "relative", display: window.innerWidth < 640 ? "none" : "flex", alignItems: "center", gap: 12 }}>
+                <div 
+                  style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#00C9A7,#00a88c)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff", cursor: "pointer", position: "relative", group: "initials" }}
+                  title={`${user?.firstName || ""} ${user?.lastName || ""}`}
+                >
+                  {(user?.firstName?.[0] || "").toUpperCase()}{(user?.lastName?.[0] || "").toUpperCase()}
+                </div>
+              </div>
+            )}
+            <button className="outline-btn" onClick={() => setPage("profile")} style={{ padding: "9px 20px", borderRadius: 8, border: "1.5px solid #00C9A7", color: "#00C9A7", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", display: window.innerWidth < 640 ? "none" : "block" }}>Profile</button>
+            <button className="outline-btn" onClick={onLogout} style={{ padding: "9px 20px", borderRadius: 8, border: "1.5px solid #00C9A7", color: "#00C9A7", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", display: window.innerWidth < 640 ? "none" : "block" }}>Log Out</button>
+          </>
+        ) : (
+          <>
+            <button className="teal-btn" onClick={onLoginClick} style={{ padding: "9px 20px", borderRadius: 8, border: "none", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", display: window.innerWidth < 640 ? "none" : "block" }}>Log In</button>
+            <button className="teal-btn" onClick={() => setPage("chat")} style={{ padding: "9px 20px", borderRadius: 8, border: "none", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", display: window.innerWidth < 640 ? "none" : "block" }}>Try CliniqBot</button>
+          </>
+        )}
         <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", display: "none" }} className="hamburger">
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -163,7 +191,18 @@ const Navbar = ({ page, setPage }) => {
           {links.map(l => (
             <button key={l} onClick={() => { setPage(l.toLowerCase()); setMenuOpen(false); }} style={{ background: "none", border: "none", color: page === l.toLowerCase() ? "#00C9A7" : "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 500, cursor: "pointer", textAlign: "left" }}>{l}</button>
           ))}
-          <button className="teal-btn" onClick={() => { setPage("chat"); setMenuOpen(false); }} style={{ padding: "10px 20px", borderRadius: 8, border: "none", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: "pointer" }}>Try CliniqBot</button>
+          {isLoggedIn ? (
+            <>
+              {user && <span style={{ color: "#00C9A7", fontSize: 14, fontWeight: 600 }}>👤 {user?.firstName} {user?.lastName}</span>}
+              <button className="outline-btn" onClick={() => { setPage("profile"); setMenuOpen(false); }} style={{ padding: "10px 20px", borderRadius: 8, border: "1.5px solid #00C9A7", color: "#00C9A7", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: "pointer" }}>Profile</button>
+              <button className="outline-btn" onClick={() => { onLogout(); setMenuOpen(false); }} style={{ padding: "10px 20px", borderRadius: 8, border: "1.5px solid #00C9A7", color: "#00C9A7", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: "pointer" }}>Log Out</button>
+            </>
+          ) : (
+            <>
+              <button className="teal-btn" onClick={() => { onLoginClick(); setMenuOpen(false); }} style={{ padding: "10px 20px", borderRadius: 8, border: "none", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: "pointer" }}>Log In</button>
+              <button className="teal-btn" onClick={() => { setPage("chat"); setMenuOpen(false); }} style={{ padding: "10px 20px", borderRadius: 8, border: "none", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: "pointer" }}>Try CliniqBot</button>
+            </>
+          )}
         </div>
       )}
     </nav>
@@ -327,8 +366,372 @@ const Landing = ({ setPage }) => {
   );
 };
 
+// ── Login Modal ──────────────────────────────────────────────────────────────────
+const LoginModal = ({ isOpen, onClose, onLogin }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [age, setAge] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetOldPassword, setResetOldPassword] = useState("");
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [resetConfirmPassword, setResetConfirmPassword] = useState("");
+
+  // Get all accounts (demo + localStorage)
+  const getAllAccounts = () => {
+    const stored = localStorage.getItem("cliniqbot_accounts");
+    const userAccounts = stored ? JSON.parse(stored) : [];
+    return [...DEMO_ACCOUNTS, ...userAccounts];
+  };
+
+  // Get localStorage accounts only
+  const getUserAccounts = () => {
+    const stored = localStorage.getItem("cliniqbot_accounts");
+    return stored ? JSON.parse(stored) : [];
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
+    
+    if (!email || !password) { 
+      setError("Please fill in all fields"); 
+      return; 
+    }
+
+    if (!isSignUp) {
+      // Login: Check all accounts (demo + user-created)
+      const allAccounts = getAllAccounts();
+      const account = allAccounts.find(acc => acc.email === email && acc.password === password);
+      if (!account) {
+        setError("Invalid email or password.");
+        return;
+      }
+      onLogin({ email, username: account.username, firstName: account.firstName, lastName: account.lastName });
+    } else {
+      // Sign up: Validate fields
+      if (!firstName || !lastName || !age || !mobile || !height || !weight) {
+        setError("Please fill in all profile fields.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("Passwords do not match.");
+        return;
+      }
+      if (password.length < 6) {
+        setError("Password must be at least 6 characters.");
+        return;
+      }
+
+      // Check if email already exists
+      const allAccounts = getAllAccounts();
+      if (allAccounts.some(acc => acc.email === email)) {
+        setError("Email already registered.");
+        return;
+      }
+
+      // Create new account with profile data
+      const username = email.split("@")[0];
+      const newAccount = { 
+        email, 
+        password, 
+        username,
+        firstName,
+        lastName,
+        age: parseInt(age),
+        mobile,
+        height,
+        weight,
+        isActive: true
+      };
+      const userAccounts = getUserAccounts();
+      userAccounts.push(newAccount);
+      localStorage.setItem("cliniqbot_accounts", JSON.stringify(userAccounts));
+      
+      onLogin({ email, username, firstName, lastName });
+    }
+    
+    setEmail(""); 
+    setPassword("");
+    setConfirmPassword("");
+    setFirstName("");
+    setLastName("");
+    setAge("");
+    setMobile("");
+    setHeight("");
+    setWeight("");
+  };
+
+  const handleForgotPassword = () => {
+    setError("");
+    if (!forgotEmail) {
+      setError("Please enter your email address.");
+      return;
+    }
+    
+    const allAccounts = getAllAccounts();
+    const account = allAccounts.find(acc => acc.email === forgotEmail);
+    
+    if (!account) {
+      setError("Email not found in our system.");
+      return;
+    }
+
+    setError("");
+    setShowForgotPassword(false);
+    setShowResetPassword(true);
+    setResetEmail(forgotEmail);
+    setForgotEmail("");
+  };
+
+  const handleResetPassword = () => {
+    setError("");
+    if (!resetOldPassword || !resetNewPassword || !resetConfirmPassword) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    const allAccounts = getAllAccounts();
+    const account = allAccounts.find(acc => acc.email === resetEmail);
+
+    if (!account || account.password !== resetOldPassword) {
+      setError("Incorrect current password.");
+      return;
+    }
+
+    if (resetNewPassword !== resetConfirmPassword) {
+      setError("New passwords do not match.");
+      return;
+    }
+
+    if (resetNewPassword.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    // Update password in localStorage (if user-created) or just show demo reset
+    const stored = localStorage.getItem("cliniqbot_accounts");
+    const userAccounts = stored ? JSON.parse(stored) : [];
+    const index = userAccounts.findIndex(acc => acc.email === resetEmail);
+    
+    if (index !== -1) {
+      userAccounts[index].password = resetNewPassword;
+      localStorage.setItem("cliniqbot_accounts", JSON.stringify(userAccounts));
+    }
+
+    setShowResetPassword(false);
+    setResetEmail("");
+    setResetOldPassword("");
+    setResetNewPassword("");
+    setResetConfirmPassword("");
+    setError("");
+    setSuccess("Password reset successfully! Please log in with your new password.");
+    setTimeout(() => { setSuccess(""); }, 3000);
+  };
+
+  if (!isOpen) return null;
+
+  const inputStyle = { padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(0,201,167,0.3)", background: "rgba(255,255,255,0.05)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, outline: "none" };
+
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, backdropFilter: "blur(4px)", overflowY: "auto", padding: "20px" }}>
+      <div className="glass-card" style={{ padding: 40, borderRadius: 24, maxWidth: isSignUp ? 500 : 420, width: "100%", margin: "auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 700 }}>{isSignUp ? "Create Account" : "Welcome Back"}</h2>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#fff", fontSize: 24, cursor: "pointer" }}>×</button>
+        </div>
+        
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {error && (
+            <div style={{ padding: 12, background: "rgba(230,57,70,0.15)", border: "1px solid rgba(230,57,70,0.3)", borderRadius: 8, color: "#ff6b6b", fontSize: 13 }}>
+              {error}
+            </div>
+          )}
+          <input 
+            type="email" 
+            placeholder="Email address" 
+            value={email} 
+            onChange={e => { setEmail(e.target.value); setError(""); }} 
+            style={inputStyle}
+          />
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={e => { setPassword(e.target.value); setError(""); }} 
+            style={inputStyle}
+          />
+          {isSignUp && (
+            <>
+              <input 
+                type="password" 
+                placeholder="Confirm password" 
+                value={confirmPassword} 
+                onChange={e => { setConfirmPassword(e.target.value); setError(""); }} 
+                style={inputStyle}
+              />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <input 
+                  type="text" 
+                  placeholder="First name" 
+                  value={firstName} 
+                  onChange={e => { setFirstName(e.target.value); setError(""); }} 
+                  style={inputStyle}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Last name" 
+                  value={lastName} 
+                  onChange={e => { setLastName(e.target.value); setError(""); }} 
+                  style={inputStyle}
+                />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <input 
+                  type="number" 
+                  placeholder="Age" 
+                  value={age} 
+                  onChange={e => { setAge(e.target.value); setError(""); }} 
+                  style={inputStyle}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Mobile number" 
+                  value={mobile} 
+                  onChange={e => { setMobile(e.target.value); setError(""); }} 
+                  style={inputStyle}
+                />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <input 
+                  type="text" 
+                  placeholder="Height (cm)" 
+                  value={height} 
+                  onChange={e => { setHeight(e.target.value); setError(""); }} 
+                  style={inputStyle}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Weight (kg)" 
+                  value={weight} 
+                  onChange={e => { setWeight(e.target.value); setError(""); }} 
+                  style={inputStyle}
+                />
+              </div>
+            </>
+          )}
+          <button type="submit" className="teal-btn" style={{ padding: "12px 16px", borderRadius: 10, border: "none", color: "#fff", fontWeight: 600, cursor: "pointer", marginTop: 8 }}>
+            {isSignUp ? "Create Account" : "Log In"}
+          </button>
+        </form>
+
+        {!isSignUp && (
+          <div style={{ textAlign: "center", marginTop: 12, fontSize: 13 }}>
+            <button onClick={() => setShowForgotPassword(true)} style={{ background: "none", border: "none", color: "#00C9A7", cursor: "pointer", fontWeight: 500 }}>Forgot Password?</button>
+          </div>
+        )}
+
+        <div style={{ textAlign: "center", marginTop: 20, color: "rgba(255,255,255,0.6)", fontSize: 14 }}>
+          {isSignUp ? "Already have an account? " : "Don't have an account? "}
+          <button onClick={() => { setIsSignUp(!isSignUp); setError(""); }} style={{ background: "none", border: "none", color: "#00C9A7", cursor: "pointer", fontWeight: 600 }}>
+            {isSignUp ? "Log In" : "Sign Up"}
+          </button>
+        </div>
+
+        {success && (
+          <div style={{ padding: 12, background: "rgba(0,201,167,0.15)", border: "1px solid rgba(0,201,167,0.3)", borderRadius: 8, color: "#00C9A7", fontSize: 13, marginTop: 16 }}>
+            {success}
+          </div>
+        )}
+      </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, backdropFilter: "blur(4px)" }}>
+          <div className="glass-card" style={{ padding: 40, borderRadius: 24, maxWidth: 420, width: "90%" }}>
+            <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 700, marginBottom: 16 }}>Forgot Password</h2>
+            <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: 24, fontSize: 14 }}>Enter your email address and we'll help you reset your password.</p>
+            
+            {error && (
+              <div style={{ padding: 12, background: "rgba(230,57,70,0.15)", border: "1px solid rgba(230,57,70,0.3)", borderRadius: 8, color: "#ff6b6b", fontSize: 13, marginBottom: 16 }}>
+                {error}
+              </div>
+            )}
+
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              value={forgotEmail} 
+              onChange={e => { setForgotEmail(e.target.value); setError(""); }}
+              style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(0,201,167,0.3)", background: "rgba(255,255,255,0.05)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, outline: "none", width: "100%", marginBottom: 16 }}
+            />
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={handleForgotPassword} className="teal-btn" style={{ padding: "12px 24px", borderRadius: 10, border: "none", color: "#fff", fontWeight: 600, cursor: "pointer", flex: 1 }}>Continue</button>
+              <button onClick={() => { setShowForgotPassword(false); setForgotEmail(""); setError(""); }} style={{ padding: "12px 24px", borderRadius: 10, border: "1.5px solid rgba(0,201,167,0.3)", background: "transparent", color: "#00C9A7", fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", flex: 1 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {showResetPassword && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, backdropFilter: "blur(4px)", overflowY: "auto", padding: "20px" }}>
+          <div className="glass-card" style={{ padding: 40, borderRadius: 24, maxWidth: 420, width: "100%", margin: "auto" }}>
+            <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 700, marginBottom: 16 }}>Reset Password</h2>
+            
+            {error && (
+              <div style={{ padding: 12, background: "rgba(230,57,70,0.15)", border: "1px solid rgba(230,57,70,0.3)", borderRadius: 8, color: "#ff6b6b", fontSize: 13, marginBottom: 16 }}>
+                {error}
+              </div>
+            )}
+
+            <input 
+              type="password" 
+              placeholder="Current password" 
+              value={resetOldPassword} 
+              onChange={e => { setResetOldPassword(e.target.value); setError(""); }}
+              style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(0,201,167,0.3)", background: "rgba(255,255,255,0.05)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, outline: "none", width: "100%", marginBottom: 12 }}
+            />
+            <input 
+              type="password" 
+              placeholder="New password" 
+              value={resetNewPassword} 
+              onChange={e => { setResetNewPassword(e.target.value); setError(""); }}
+              style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(0,201,167,0.3)", background: "rgba(255,255,255,0.05)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, outline: "none", width: "100%", marginBottom: 12 }}
+            />
+            <input 
+              type="password" 
+              placeholder="Confirm new password" 
+              value={resetConfirmPassword} 
+              onChange={e => { setResetConfirmPassword(e.target.value); setError(""); }}
+              style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(0,201,167,0.3)", background: "rgba(255,255,255,0.05)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, outline: "none", width: "100%", marginBottom: 16 }}
+            />
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={handleResetPassword} className="teal-btn" style={{ padding: "12px 24px", borderRadius: 10, border: "none", color: "#fff", fontWeight: 600, cursor: "pointer", flex: 1 }}>Reset Password</button>
+              <button onClick={() => { setShowResetPassword(false); setResetEmail(""); setResetOldPassword(""); setResetNewPassword(""); setResetConfirmPassword(""); setError(""); }} style={{ padding: "12px 24px", borderRadius: 10, border: "1.5px solid rgba(0,201,167,0.3)", background: "transparent", color: "#00C9A7", fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", flex: 1 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ── Chat Page ─────────────────────────────────────────────────────────────────
-const Chat = () => {
+const Chat = ({ isLoggedIn, user, chatCount, setChatCount, maxChats }) => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const [messages, setMessages] = useState([{
     role: "assistant",
@@ -364,6 +767,7 @@ const Chat = () => {
   const sendMessage = async (text) => {
     const msgText = text || input.trim();
     if (!msgText && !imageBase64) return;
+    if (chatCount >= maxChats) { alert(`Chat limit reached (${maxChats}/${maxChats}). ${isLoggedIn ? "Upgrade your plan" : "Log in for 10 daily chats"}!`); return; }
     if (!apiKey) { alert("Gemini API key not found in .env file. Please add VITE_GEMINI_API_KEY."); return; }
     const userMsg = { role: "user", content: msgText || "Please analyze this medicine image.", timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), image };
     setMessages(prev => [...prev, userMsg]);
@@ -406,6 +810,7 @@ const Chat = () => {
       
       const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't process that. Please try again.";
       setMessages(prev => [...prev, { role: "assistant", content: aiText, timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }]);
+      setChatCount(prev => prev + 1);
     } catch (err) {
       setMessages(prev => [...prev, { role: "assistant", content: `⚠️ Sorry, I encountered an error: ${err.message}. Please check your Gemini API key in .env file and try again.`, timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }]);
     }
@@ -415,10 +820,16 @@ const Chat = () => {
 
   return (
     <div style={{ minHeight: "100vh", paddingTop: 68, display: "flex", flexDirection: "column" }}>
-      {/* API Key Status Bar */}
-      <div style={{ background: "rgba(0,201,167,0.06)", borderBottom: "1px solid rgba(0,201,167,0.12)", padding: "12px 24px", display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{ color: "#00C9A7", fontSize: 13, fontWeight: 500 }}>✓ Google Gemini API</span>
-        <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>Free tier • Vision-enabled</span>
+      {/* Status Bar */}
+      <div style={{ background: "rgba(0,201,167,0.06)", borderBottom: "1px solid rgba(0,201,167,0.12)", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 16 }}>
+          <span style={{ color: "#00C9A7", fontSize: 13, fontWeight: 500 }}>✓ Google Gemini API</span>
+          <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>Free tier • Vision-enabled</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {isLoggedIn && <span style={{ color: "#00C9A7", fontSize: 13 }}>👤 {user?.username}</span>}
+          <span style={{ background: chatCount >= maxChats ? "rgba(230,57,70,0.2)" : "rgba(0,201,167,0.2)", color: chatCount >= maxChats ? "#e63946" : "#00C9A7", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 500 }}>Chats: {chatCount}/{maxChats}</span>
+        </div>
       </div>
 
       <div style={{ flex: 1, display: "grid", gridTemplateColumns: "clamp(260px,35%,380px) 1fr", height: "calc(100vh - 108px)" }}>
@@ -579,6 +990,276 @@ const About = () => {
   );
 };
 
+// ── Profile ───────────────────────────────────────────────────────────────────
+const Profile = ({ user, onLogout, onDeactivate }) => {
+  const [profileData, setProfileData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
+  const [deactivatePassword, setDeactivatePassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    const allAccounts = (() => {
+      const stored = localStorage.getItem("cliniqbot_accounts");
+      const userAccounts = stored ? JSON.parse(stored) : [];
+      return [...DEMO_ACCOUNTS, ...userAccounts];
+    })();
+    
+    const account = allAccounts.find(acc => acc.email === user?.email);
+    if (account) {
+      setProfileData(account);
+      setEditData(account);
+    }
+  }, [user]);
+
+  const handleSaveProfile = () => {
+    const stored = localStorage.getItem("cliniqbot_accounts");
+    const userAccounts = stored ? JSON.parse(stored) : [];
+    const index = userAccounts.findIndex(acc => acc.email === user?.email);
+    
+    // If account exists in localStorage, update it
+    if (index !== -1) {
+      userAccounts[index] = { ...userAccounts[index], ...editData };
+      localStorage.setItem("cliniqbot_accounts", JSON.stringify(userAccounts));
+      setProfileData(userAccounts[index]);
+    } 
+    // If it's a demo account, move it to localStorage with edited data
+    else {
+      const demoAccount = DEMO_ACCOUNTS.find(acc => acc.email === user?.email);
+      if (demoAccount) {
+        userAccounts.push({ ...demoAccount, ...editData });
+        localStorage.setItem("cliniqbot_accounts", JSON.stringify(userAccounts));
+        setProfileData({ ...demoAccount, ...editData });
+      }
+    }
+    
+    setIsEditing(false);
+    setError("");
+    setSuccess("Profile updated successfully!");
+    setTimeout(() => setSuccess(""), 3000);
+  };
+
+  const handleDeactivateAccount = () => {
+    setError("");
+    if (!deactivatePassword) {
+      setError("Please enter your password to confirm.");
+      return;
+    }
+
+    // Verify password
+    if (profileData.password !== deactivatePassword) {
+      setError("Incorrect password.");
+      return;
+    }
+
+    const stored = localStorage.getItem("cliniqbot_accounts");
+    const userAccounts = stored ? JSON.parse(stored) : [];
+    const index = userAccounts.findIndex(acc => acc.email === user?.email);
+    
+    if (index !== -1) {
+      userAccounts[index].isActive = false;
+      localStorage.setItem("cliniqbot_accounts", JSON.stringify(userAccounts));
+      setShowDeactivateConfirm(false);
+      setDeactivatePassword("");
+      onDeactivate();
+    }
+  };
+
+  if (!profileData) {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0A1628", paddingTop: 100, paddingBottom: 60 }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px", textAlign: "center", color: "#00C9A7" }}>
+          <div className="typing-dot" style={{ display: "inline-block" }}>.</div>
+          <div className="typing-dot" style={{ display: "inline-block" }}>.</div>
+          <div className="typing-dot" style={{ display: "inline-block" }}>.</div>
+        </div>
+      </div>
+    );
+  }
+
+  const fieldStyle = { padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(0,201,167,0.3)", background: "rgba(255,255,255,0.05)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, outline: "none", width: "100%" };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#0A1628", paddingTop: 100, paddingBottom: 60 }}>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 40 }}>
+          <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 40, fontWeight: 700 }}>My <span style={{ color: "#00C9A7" }}>Profile</span></h1>
+          <div style={{ display: "flex", gap: 12 }}>
+            {!isEditing && (
+              <>
+                <button onClick={() => { setIsEditing(true); setError(""); }} className="teal-btn" style={{ padding: "10px 24px", borderRadius: 10, border: "none", color: "#fff", fontWeight: 600, cursor: "pointer" }}>Edit Profile</button>
+                <button onClick={() => setShowDeactivateConfirm(true)} style={{ padding: "10px 24px", borderRadius: 10, border: "1.5px solid #E63946", background: "rgba(230,57,70,0.1)", color: "#E63946", fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans',sans-serif" }}>Deactivate</button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {error && (
+          <div style={{ padding: 16, background: "rgba(230,57,70,0.15)", border: "1px solid rgba(230,57,70,0.3)", borderRadius: 12, color: "#ff6b6b", marginBottom: 24 }}>
+            {error}
+          </div>
+        )}
+        
+        {success && (
+          <div style={{ padding: 16, background: "rgba(0,201,167,0.15)", border: "1px solid rgba(0,201,167,0.3)", borderRadius: 12, color: "#00C9A7", marginBottom: 24 }}>
+            {success}
+          </div>
+        )}
+
+        <div className="glass-card" style={{ padding: 40, borderRadius: 20, marginBottom: 32 }}>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg,#00C9A7,#00a88c)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 700 }}>
+              {profileData.firstName?.charAt(0) || "U"}
+            </div>
+            {profileData.firstName} {profileData.lastName}
+          </h2>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>FIRST NAME</label>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={editData.firstName} 
+                  onChange={e => setEditData({...editData, firstName: e.target.value})}
+                  style={fieldStyle}
+                />
+              ) : (
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{profileData.firstName}</p>
+              )}
+            </div>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>LAST NAME</label>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={editData.lastName} 
+                  onChange={e => setEditData({...editData, lastName: e.target.value})}
+                  style={fieldStyle}
+                />
+              ) : (
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{profileData.lastName}</p>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>EMAIL</label>
+              <p style={{ fontSize: 18, fontWeight: 600, color: "#00C9A7" }}>{profileData.email}</p>
+            </div>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>AGE</label>
+              {isEditing ? (
+                <input 
+                  type="number" 
+                  value={editData.age} 
+                  onChange={e => setEditData({...editData, age: parseInt(e.target.value)})}
+                  style={fieldStyle}
+                />
+              ) : (
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{profileData.age} years</p>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>MOBILE NUMBER</label>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={editData.mobile} 
+                  onChange={e => setEditData({...editData, mobile: e.target.value})}
+                  style={fieldStyle}
+                />
+              ) : (
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{profileData.mobile}</p>
+              )}
+            </div>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>ACCOUNT STATUS</label>
+              <p style={{ fontSize: 18, fontWeight: 600, color: profileData.isActive ? "#00C9A7" : "#E63946" }}>
+                {profileData.isActive ? "🟢 Active" : "🔴 Deactivated"}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>HEIGHT</label>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={editData.height} 
+                  onChange={e => setEditData({...editData, height: e.target.value})}
+                  placeholder="cm"
+                  style={fieldStyle}
+                />
+              ) : (
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{profileData.height} cm</p>
+              )}
+            </div>
+            <div>
+              <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 12, marginBottom: 8, fontWeight: 600 }}>WEIGHT</label>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={editData.weight} 
+                  onChange={e => setEditData({...editData, weight: e.target.value})}
+                  placeholder="kg"
+                  style={fieldStyle}
+                />
+              ) : (
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{profileData.weight} kg</p>
+              )}
+            </div>
+          </div>
+
+          {isEditing && (
+            <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+              <button onClick={handleSaveProfile} className="teal-btn" style={{ padding: "12px 32px", borderRadius: 10, border: "none", color: "#fff", fontWeight: 600, cursor: "pointer", flex: 1 }}>Save Changes</button>
+              <button onClick={() => { setIsEditing(false); setEditData(profileData); setError(""); }} style={{ padding: "12px 32px", borderRadius: 10, border: "1.5px solid rgba(0,201,167,0.3)", background: "transparent", color: "#00C9A7", fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", flex: 1 }}>Cancel</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {showDeactivateConfirm && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, backdropFilter: "blur(4px)" }}>
+          <div className="glass-card" style={{ padding: 40, borderRadius: 24, maxWidth: 420, width: "90%" }}>
+            <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, fontWeight: 700, marginBottom: 16, color: "#E63946" }}>Deactivate Account</h2>
+            <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: 24, lineHeight: 1.6 }}>
+              This will deactivate your account. You won't be able to log in until you reactivate it. Your data will be preserved.
+            </p>
+            
+            {error && (
+              <div style={{ padding: 12, background: "rgba(230,57,70,0.15)", border: "1px solid rgba(230,57,70,0.3)", borderRadius: 8, color: "#ff6b6b", fontSize: 13, marginBottom: 16 }}>
+                {error}
+              </div>
+            )}
+
+            <input 
+              type="password" 
+              placeholder="Enter password to confirm" 
+              value={deactivatePassword} 
+              onChange={e => { setDeactivatePassword(e.target.value); setError(""); }}
+              style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(0,201,167,0.3)", background: "rgba(255,255,255,0.05)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, outline: "none", width: "100%", marginBottom: 24 }}
+            />
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={handleDeactivateAccount} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: "#E63946", color: "#fff", fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", flex: 1 }}>Deactivate</button>
+              <button onClick={() => { setShowDeactivateConfirm(false); setDeactivatePassword(""); setError(""); }} style={{ padding: "12px 24px", borderRadius: 10, border: "1.5px solid rgba(0,201,167,0.3)", background: "transparent", color: "#00C9A7", fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", flex: 1 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ── Footer ────────────────────────────────────────────────────────────────────
 const Footer = ({ setPage }) => (
   <footer style={{ background: "rgba(0,0,0,0.4)", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "48px 24px 32px" }}>
@@ -614,7 +1295,35 @@ const Footer = ({ setPage }) => (
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState("home");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [chatCount, setChatCount] = useState(0);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  
+  const maxChats = isLoggedIn ? 10 : 2;
+
   useEffect(() => { window.scrollTo(0, 0); }, [page]);
+
+  const handleLogin = (userData) => {
+    setIsLoggedIn(true);
+    setUser(userData);
+    setLoginModalOpen(false);
+    setChatCount(0); // Reset count on new login
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setChatCount(0);
+    setPage("home");
+  };
+
+  const handleDeactivateAccount = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setChatCount(0);
+    setPage("home");
+  };
 
   return (
     <div style={{ minHeight: "100vh", background: "#0A1628", position: "relative" }}>
@@ -627,12 +1336,14 @@ export default function App() {
         }
       `}</style>
       <HexPattern />
+      <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} onLogin={handleLogin} />
       <div style={{ position: "relative", zIndex: 1 }}>
-        <Navbar page={page} setPage={setPage} />
+        <Navbar page={page} setPage={setPage} isLoggedIn={isLoggedIn} user={user} onLogout={handleLogout} onLoginClick={() => setLoginModalOpen(true)} />
         {page === "home" && <Landing setPage={setPage} />}
-        {page === "chat" && <Chat />}
+        {page === "chat" && <Chat isLoggedIn={isLoggedIn} user={user} chatCount={chatCount} setChatCount={setChatCount} maxChats={maxChats} />}
         {page === "about" && <About />}
-        {page !== "chat" && <Footer setPage={setPage} />}
+        {page === "profile" && isLoggedIn && <Profile user={user} onLogout={handleLogout} onDeactivate={handleDeactivateAccount} />}
+        {page !== "chat" && page !== "profile" && <Footer setPage={setPage} />}
       </div>
     </div>
   );
