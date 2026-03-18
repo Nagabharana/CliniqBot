@@ -1,9 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/Landing.jsx
-// Full landing / home page.
-// Props: setPage (fn)
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { ArrowRight } from "lucide-react";
 import { STATS } from "../data/constants";
 import { useScrollReveal } from "../hooks/useScrollReveal";

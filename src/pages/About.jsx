@@ -1,8 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/About.jsx
-// About page with mission, how AI works, disclaimer, and FAQ accordion.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { Stethoscope } from "lucide-react";
 import FaqAccordion from "../components/FaqAccordion";
 import { FONTS, COLORS } from "../styles/globalStyles";

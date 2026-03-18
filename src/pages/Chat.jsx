@@ -1,8 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/pages/Chat.jsx
-// Updated for Google Gemini API — header bar updated with Gemini branding + link
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState } from "react";
 import { useChat } from "../hooks/useChat";
 import ImageUploadPanel from "../components/ImageUploadPanel";
