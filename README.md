@@ -1,16 +1,33 @@
-# React + Vite
+# 🩺 CliniqBot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**AI-Powered Medical Image & Query Assistant**
 
-Currently, two official plugins are available:
+CliniqBot lets you upload any medical image — X-rays, MRI scans, CT scans, or medicine packaging — and get instant AI-powered clinical analysis. Just ask a question and Claude does the rest.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- 🦴 **X-Ray & Scan Analysis** — fracture detection, bone structure, tissue abnormalities
+- 💊 **Medicine Recognition** — dosage, side effects, drug interactions
+- 💬 **Split-panel chat** — drag-and-drop upload with a real-time AI conversation
+- 📱 **Fully responsive** — works on mobile and desktop
+- 🔒 **Private** — images go directly to Anthropic's API, nothing is stored
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Quick Start
 
-## Expanding the ESLint configuration
+```bash
+npm create vite@latest cliniqbot -- --template react
+cd cliniqbot
+npm install
+npm install lucide-react
+# Replace src/ with the one from cliniqbot-modular.zip
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Open **http://localhost:5173**, go to **Chat**, paste your Anthropic API key and start scanning.
+
+⚕️ **Disclaimer:** CliniqBot is for informational purposes only. Always consult a licensed physician for medical decisions.
+
+---
+
+<img width="1440" height="923" alt="image" src="https://github.com/user-attachments/assets/f503cb7f-a37b-4b01-9ca8-91c8e574ac45" />
+
