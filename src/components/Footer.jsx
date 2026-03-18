@@ -74,7 +74,7 @@ export default function Footer({ setPage }) {
             fontSize: 12,
           }}
         >
-          © {new Date().getFullYear()} CliniqBot — Built with Claude AI by Anthropic
+          © {new Date().getFullYear()} CliniqBot — Your AI Health Assistant
         </div>
       </div>
     </footer>
