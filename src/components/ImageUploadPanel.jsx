@@ -1,10 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/components/ImageUploadPanel.jsx
-// Left panel of Chat page: drag-drop zone, upload button, suggested chips.
-// Updated to support X-rays, MRI, CT scans, and medicine images.
-// Props: image, handleFile, resetImage, setInput
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useRef, useState, useCallback } from "react";
 import { Upload, RefreshCw, ScanLine } from "lucide-react";
 import { SUGGESTED_QUESTIONS } from "../data/constants";
